@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<head>
+    <html lang="en">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" 
+    rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" 
+    crossorigin="anonymous">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konnex API</title>
+</head>
+<body>
+    <div class="container">
+   <h1 class="display-4 mb-4">Konnex API</h1>
+   <div class="d-flex">
+        <button class="btn btn-primary mr-4" id="getText">Get Simple Text</button>
+   
+        <button class="btn btn-success mr-4" id="getProfile">Get Profile from URL</button>
+   
+        <button class="btn btn-warning mr-4" id="getOPCServer">Get OPC Server</button>
+</div>
+<hr>
+    <div id="output"></div>
+        <form id="registerUser">
+            <div>
+                <input type="text" id="username" placeholder="username">
+            </div>
+            <div>
+                <input type="text" id="password" placeholder="password">
+            </div>
+            <input type="submit" value="Submit">
+        </form>
+
+    <script>
+        document.getElementById('getText').addEventListener
+        ('click', getText);
+        document.getElementById('getProfile').addEventListener
+        ('click', getProfile);
+        document.getElementById('getOPCServer').addEventListener
+        ('click', getOPCServer);
+        document.getElementById('registerUser').addEventListener
+        ('submit', registerUser);
+
+        document.getElementById
+
+
+        function getText(){
+            fetch('sample.txt')
+            .then(function(res){
+                console.log(res);
+            })
+        }
+        function getProfile(){
+            fetch('http://localhost:443/profile')
+            .then((res) => res.json())
+            .then((data) => {
+                let output = '<h3>User Profile</h3>';
+                data.forEach(function(profile){
+                    output =+ `
+                    <div>
+                        <h4>${profile.title}</h4>
+                    </div>   
+                    `;
+                });
+                document.getElementByID('output').innerHTML = output;
+            })
+        }
+        function getOPCServer(){
+            fetch('http://localhost:443/browse')
+            .then((res) => res.json())
+            .then((data) => {
+                let output = '<h3>OPC Server</h3>';
+                data.forEach(function(opcserver){
+                    output =+ `
+                    <div>
+                        <h4>${opcserver.server-uri}</h4>
+                    </div>   
+                    `;
+                });
+                document.getElementByID('output').innerHTML = output;
+            })
+        }
+        function registerUser(e){
+            e.preventDefault();
+
+            let username = document.getElementById('username').value;
+            let password = document.getElementById('password').value;
+            
+            fetch('http://localhost:443/register', {
+                method:'POST',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-type': 'application/json',
+                    'Accept-Encoding': 'gzip, deflate, br',
+                    'Connection': 'keep-alive',
+                },
+                body:JSON.stringify({username:username, password:password})
+            })
+            .then((res) => res.json())
+            .then((data) => console.log(data))
+            .catch((err) => console.log(err))
+        }
+
+    </script>
+</body>
+</html>
